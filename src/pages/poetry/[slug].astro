@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const poems = await getCollection('poetry');
+  return poems.map(poem => ({
+    params: { slug: poem.slug },
+    props: { poem },
+  }));
+}
+
+interface Props { poem: CollectionEntry<'poetry'>; }
+const { poem } = Astro.props;
+const { Content } = await poem.render();
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<BaseLayout title={poem.data.title} description={poem.data.description}>
+  <main>
+    <nav class="breadcrumb">
+      <a href="/">Dia Manoj</a>
+      <span>/</span>
+      <a href="/#poetry">Poetry</a>
+    </nav>
+
+    <article>
+      <header>
+        <h1>{poem.data.title}</h1>
+        <time>{formatDate(poem.data.date)}</time>
+        {poem.data.tags && (
+          <div class="tags">
+            {poem.data.tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+        )}
+      </header>
+
+      <div class="poem-body">
+        <Content />
+      </div>
+    </article>
+
+    <a href="/" class="back">← back</a>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 0 6rem;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 3.5rem;
+  }
+
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb span { color: var(--text-dim); }
+
+  article header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  time {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    display: block;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .tag {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+  }
+
+  /* ── Poem body ── */
+  .poem-body {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 2;
+    color: var(--text);
+  }
+
+  /* Preserve whitespace for poetry */
+  .poem-body :global(p) {
+    white-space: pre-wrap;
+    margin-bottom: 1.5em;
+  }
+
+  .poem-body :global(br) {
+    display: block;
+    content: '';
+  }
+
+  /* Section breaks */
+  .poem-body :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .poem-body :global(em) {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .back {
+    display: inline-block;
+    margin-top: 4rem;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .back:hover { color: var(--accent); }
+</style>

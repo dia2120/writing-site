@@ -1,0 +1,61 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = "Writing by Dia Manoj" } = Astro.props;
+const pageTitle = title ? `${title} — Dia Manoj` : "Dia Manoj";
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{pageTitle}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/src/styles/global.css" />
+</head>
+<body>
+  <slot />
+</body>
+</html>
+
+<style is:global>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Karla:wght@300;400&display=swap');
+
+  :root {
+    --bg: #0c0b09;
+    --bg-2: #131210;
+    --surface: #1a1814;
+    --border: #2e2b24;
+    --text: #e8e0d0;
+    --text-muted: #7a7060;
+    --text-dim: #4a4438;
+    --accent: #c9a96e;
+    --accent-dim: #8a6d3f;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Lora', Georgia, serif;
+    --font-ui: 'Karla', system-ui, sans-serif;
+
+    --max-width: 680px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body { min-height: 100vh; padding: 0 1.5rem; }
+  a { color: inherit; text-decoration: none; }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+</style>

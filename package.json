@@ -1,0 +1,15 @@
+{
+  "name": "writing-site",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "new-poem": "node scripts/new-post.js poem",
+    "new-essay": "node scripts/new-post.js essay"
+  },
+  "dependencies": {
+    "astro": "^4.5.0"
+  }
+}

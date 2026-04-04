@@ -1,0 +1,322 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const poems = (await getCollection('poetry', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const essays = (await getCollection('essays', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Merge and tag with type, sort by date
+const allPosts = [
+  ...poems.map(p => ({ ...p, type: 'poetry' as const })),
+  ...essays.map(e => ({ ...e, type: 'essays' as const })),
+].sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title));
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<BaseLayout>
+  <main>
+    <!-- Header -->
+    <header>
+      <div class="name-block">
+        <h1>Dia Manoj</h1>
+        <p class="tagline">writing</p>
+      </div>
+
+      <nav>
+        <a href="#essays" class="nav-link">Short Stories / Essays</a>
+        <span class="dot">·</span>
+        <a href="#poetry" class="nav-link">Poetry</a>
+      </nav>
+
+      <div class="rule"></div>
+    </header>
+
+    <!-- Search (fixed top-right) -->
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search…" autocomplete="off" />
+    </div>
+
+    <!-- All posts, most recent first -->
+    <section class="feed" id="all">
+      {allPosts.map((post) => (
+        <a href={`/${post.type}/${post.slug}`} class="post-row" data-search={`${post.data.title} ${(post.data.tags || []).join(' ')}`.toLowerCase()}>
+          <span class="post-type">{post.type === 'poetry' ? 'poem' : 'story / essay'}</span>
+          <span class="post-title">{post.data.title}</span>
+          <span class="post-date">{formatDate(post.data.date)}</span>
+        </a>
+      ))}
+    </section>
+
+    <!-- Short Stories / Essays section -->
+    {essays.length > 0 && (
+      <section id="essays">
+        <h2 class="section-label">Short Stories / Essays</h2>
+        <div class="section-list">
+          {essays.map((essay) => (
+            <a href={`/essays/${essay.slug}`} class="post-row" data-search={`${essay.data.title} ${(essay.data.tags || []).join(' ')}`.toLowerCase()}>
+              <span class="post-title">{essay.data.title}</span>
+              <span class="post-date">{formatDate(essay.data.date)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Poetry section -->
+    {poems.length > 0 && (
+      <section id="poetry">
+        <h2 class="section-label">Poetry</h2>
+        <div class="section-list">
+          {poems.map((poem) => (
+            <a href={`/poetry/${poem.slug}`} class="post-row" data-search={`${poem.data.title} ${(poem.data.tags || []).join(' ')}`.toLowerCase()}>
+              <span class="post-title">{poem.data.title}</span>
+              <span class="post-date">{formatDate(poem.data.date)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <p class="no-results" id="no-results">No posts found.</p>
+
+    <footer>
+      <span>diamanoj.com</span>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 5rem 0 6rem;
+  }
+
+  /* ── Header ── */
+  header {
+    margin-bottom: 4rem;
+  }
+
+  .name-block {
+    margin-bottom: 2.5rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 10vw, 5.5rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .tagline {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .nav-link {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover { color: var(--accent); }
+
+  .dot {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+  }
+
+  .rule {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Search ── */
+  .search-box {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+  }
+
+  .search-box input {
+    width: 10rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    transition: border-color 0.2s, width 0.2s;
+  }
+
+  .search-box input:focus {
+    width: 14rem;
+    border-color: var(--accent-dim);
+  }
+
+  .search-box input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .no-results {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    padding: 1.5rem 0;
+    display: none;
+  }
+
+  /* ── Feed ── */
+  .feed {
+    margin-bottom: 5rem;
+  }
+
+  /* ── Sections ── */
+  section + section {
+    margin-top: 4rem;
+  }
+
+  .section-label {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1.25rem;
+  }
+
+  /* ── Post rows ── */
+  .post-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .post-row:first-child { border-top: 1px solid var(--border); }
+
+  .post-row:hover .post-title {
+    color: var(--accent);
+  }
+
+  .post-row:hover .post-type {
+    color: var(--accent-dim);
+  }
+
+  .post-type {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    min-width: 3.5rem;
+    transition: color 0.2s;
+  }
+
+  /* In section lists, hide the type tag column */
+  .section-list .post-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .post-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--text);
+    transition: color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-date {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: var(--text-dim);
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 6rem;
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-align: center;
+  }
+</style>
+
+<script>
+  const input = document.getElementById('search') as HTMLInputElement;
+  const rows = document.querySelectorAll('.post-row');
+  const sections = document.querySelectorAll('section');
+  const noResults = document.getElementById('no-results')!;
+
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    let visible = 0;
+
+    rows.forEach((row) => {
+      const el = row as HTMLElement;
+      const match = !q || (el.dataset.search || '').includes(q);
+      el.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    // Hide section labels if all their rows are hidden
+    sections.forEach((sec) => {
+      const list = sec.querySelector('.section-list');
+      if (!list) return;
+      const hasVisible = Array.from(list.querySelectorAll('.post-row'))
+        .some((r) => (r as HTMLElement).style.display !== 'none');
+      (sec as HTMLElement).style.display = hasVisible ? '' : 'none';
+    });
+
+    // Hide the feed section header area if all feed rows are hidden
+    const feed = document.getElementById('all');
+    if (feed) {
+      const hasFeedVisible = Array.from(feed.querySelectorAll('.post-row'))
+        .some((r) => (r as HTMLElement).style.display !== 'none');
+      feed.style.display = hasFeedVisible ? '' : 'none';
+    }
+
+    noResults.style.display = visible === 0 && q ? 'block' : 'none';
+  });
+</script>
