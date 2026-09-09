@@ -22,7 +22,7 @@ He sighs and looks up at me from the slightly-crumpled application sheet as if I
 
 “I was a, uh, youtuber?”
 
-	At this, I’ve suddenly caught his attention, and his eyes light up with that 17-year-old-bully look of *Yes, an opportunity to humiliate!* I already feel myself regretting giving this truth so easily.
+At this, I’ve suddenly caught his attention, and his eyes light up with that 17-year-old-bully look of *Yes, an opportunity to humiliate!* I already feel myself regretting giving this truth so easily.
 
 “No way. What kind of videos? You play games or something? How many subscribers you got?” 
 
@@ -40,7 +40,7 @@ From there the humiliation ritual slows down, as he checks some boxes on the app
 
 “Um, I can start now, I guess?”
 
-	He nods, and walks me through the register. I’m not really paying attention. Instead, I’m watching an old woman count her coins in the corner and wondering where everything had gone wrong? And was that my fate in front of me? Sad, washed up, and pulling pennies out of a coin bag? After a while, the woman walks up to the register with two cases of beer and a wad of cash. He scans them, and puts them in a bag.
+He nods, and walks me through the register. I’m not really paying attention. Instead, I’m watching an old woman count her coins in the corner and wondering where everything had gone wrong? And was that my fate in front of me? Sad, washed up, and pulling pennies out of a coin bag? After a while, the woman walks up to the register with two cases of beer and a wad of cash. He scans them, and puts them in a bag.
 
 “Big party tonight?” I joke, and the woman gives me an odd look.
 
